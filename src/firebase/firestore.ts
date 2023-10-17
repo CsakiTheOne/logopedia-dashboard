@@ -1,6 +1,6 @@
 import { app } from './firebase';
 import { getCurrentUser } from './auth';
-import { getFirestore, doc, getDoc, getDocs, collection, query, where, updateDoc, QueryDocumentSnapshot, DocumentData, DocumentReference, addDoc, deleteDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, getDocs, collection, query, where, updateDoc, QueryDocumentSnapshot, DocumentData, DocumentReference, addDoc, deleteDoc, setDoc, getDocFromServer } from 'firebase/firestore';
 import Work from '../model/Work';
 import Appointment from '../model/Appointment';
 import RentalItem from '../model/RentalItem';
@@ -18,10 +18,10 @@ export function userIsAdmin(callback: (isAdmin: boolean) => void) {
     }
 
     const docRef = doc(db, 'users', userUid);
-    getDoc(docRef)
+    getDocFromServer(docRef)
         .then(snapshot => {
-            console.log(snapshot.data());
-            callback(snapshot.data()?.isAdmin);
+            console.log({ uid: userUid, isAdmin: snapshot.get('isAdmin') });
+            callback(snapshot.get('isAdmin') === true);
         })
         .catch(error => {
             console.error(error);

@@ -20,12 +20,15 @@ let currentUser: User | null = null;
 onAuthStateChanged(auth, user => {
     currentUser = user;
     onAuthStateChangedListeners.forEach(listener => listener(user));
-    if (user) {
-        setUserEmail(user.uid, user.email || '');
-    }
+    setTimeout(() => {
+        if (user && user.email) {
+            setUserEmail(user.uid, user.email);
+        }
+    }, 3000);
 });
 
 function addOnAuthStateChangedListener(listener: (user: User | null) => void) {
+    if (onAuthStateChangedListeners.includes(listener)) return;
     onAuthStateChangedListeners.push(listener);
 }
 

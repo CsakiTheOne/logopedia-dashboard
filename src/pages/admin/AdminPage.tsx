@@ -51,8 +51,8 @@ function AdminPage() {
         <Typography variant='h5'>Időpontok</Typography>
         <DateCalendar
             views={['day']}
-            minDate={dayjs().add(1, 'day')}
-            maxDate={dayjs().add(2, 'month')}
+            minDate={dayjs().subtract(2, 'month')}
+            maxDate={dayjs().add(6, 'month')}
             onChange={event => {
                 const date = event?.format('YYYY-MM-DD');
                 if (date === undefined) return;
