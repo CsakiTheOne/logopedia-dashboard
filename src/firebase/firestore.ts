@@ -20,7 +20,6 @@ export function userIsAdmin(callback: (isAdmin: boolean) => void) {
     const docRef = doc(db, 'users', userUid);
     getDocFromServer(docRef)
         .then(snapshot => {
-            console.log({ uid: userUid, isAdmin: snapshot.get('isAdmin') });
             callback(snapshot.get('isAdmin') === true);
         })
         .catch(error => {
@@ -147,14 +146,20 @@ export function getAppointmentsByDate(date: string, callback: (appointments: App
 
 export function updateAppointment(appointment: Appointment, oldId: string | undefined, callback: (isSuccesful: boolean) => void) {
     if (oldId) {
-        updateDoc(doc(db, 'works', oldId), { ...appointment })
+        updateDoc(doc(db, 'appointments', oldId), { ...appointment })
             .then(() => callback(true))
-            .catch(() => callback(false));
+            .catch(err => {
+                console.error(err);
+                callback(false);
+            });
     }
     else {
-        addDoc(collection(db, 'works'), { ...appointment })
+        addDoc(collection(db, 'appointments'), { ...appointment })
             .then(() => callback(true))
-            .catch(() => callback(false));
+            .catch(err => {
+                console.error(err);
+                callback(false);
+            });
     }
 }
 
