@@ -23,7 +23,9 @@ import React from 'react';
 import Work from '../../model/Work';
 import WorkDisplay from '../../components/WorkDisplay';
 import Appointment from '../../model/Appointment';
-import { get } from 'http';
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 function BookingPage() {
     const navigate = useNavigate();
@@ -108,8 +110,13 @@ function BookingPage() {
                 </StepContent>
             </Step>
             <Step>
-                <StepLabel>Nap</StepLabel>
+                <StepLabel>Dátum is idő: {selectedDate}</StepLabel>
                 <StepContent>
+                    <FullCalendar
+                        plugins={[timeGridPlugin, interactionPlugin]}
+                        initialView='timeGridWeek'
+                        weekends={false}
+                    />
                     <DateCalendar
                         views={['day']}
                         minDate={dayjs().add(2, 'day')}
