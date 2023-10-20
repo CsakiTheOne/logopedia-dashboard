@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { logOut } from '../../firebase/auth';
-import { getAbout, setAbout } from '../../firebase/rtdb';
+import { getAbout, setAbout, setDayEnd, setDayStart } from '../../firebase/rtdb';
 import Page from '../../components/Page';
 import {
     AppBar,
@@ -16,7 +16,7 @@ import {
     Stack,
 } from '@mui/material';
 import React from 'react';
-import { getAppointmentsByDate, getWorks } from '../../firebase/firestore';
+import { getAppointments, getAppointmentsByDate, getWorks } from '../../firebase/firestore';
 import Work from '../../model/Work';
 import WorkDisplay from '../../components/WorkDisplay';
 import { useNavigate } from 'react-router-dom';
@@ -24,16 +24,21 @@ import { DateCalendar } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import Appointment from '../../model/Appointment';
 import AppointmentDisplay from '../../components/AppointmentDisplay';
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { app } from '../../firebase/firebase';
 
 function AdminPage() {
     const navigate = useNavigate();
     const [aboutUs, setAboutUs] = useState('');
     const [works, setWorks] = useState<Work[]>([]);
-    const [appointmentsToday, setAppointmentsToday] = useState<Appointment[]>([]);
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
 
     useEffect(() => {
         getAbout(about => setAboutUs(about));
         getWorks(newWorks => setWorks(newWorks));
+        getAppointments(newAppointments => setAppointments(newAppointments));
     }, []);
 
     return <Page
@@ -49,27 +54,36 @@ function AdminPage() {
         }
     >
         <Typography variant='h5'>Időpontok</Typography>
-        <DateCalendar
-            views={['day']}
-            minDate={dayjs().subtract(2, 'month')}
-            maxDate={dayjs().add(6, 'month')}
-            onChange={event => {
-                const date = event?.format('YYYY-MM-DD');
-                if (date === undefined) return;
-                getAppointmentsByDate(date, newAppointments => setAppointmentsToday(newAppointments));
-            }}
-        />
-        <List>
-            <Stack spacing={2}>
-                {appointmentsToday.map(appointment => <AppointmentDisplay
-                    appointment={appointment}
-                    showEmail={true}
-                    onClick={() => {
-                        //TODO: something with appointments
-                    }}
-                />)}
-            </Stack>
-        </List>
+        <Card style={{padding: 16}}>
+            <FullCalendar
+                plugins={[timeGridPlugin, interactionPlugin]}
+                initialView='timeGridWeek'
+                allDaySlot={false}
+                headerToolbar={{
+                    start: 'title',
+                    end: 'today prev,next',
+                }}
+                titleFormat={{
+                    month: 'short',
+                    day: 'numeric',
+                }}
+                weekends={false}
+                events={appointments.map(appointment => {
+                    const work = works.find(w => w.title === appointment.workTitle);
+                    return {
+                        title: work?.title,
+                        start: `${appointment.date} ${appointment.startTime}`,
+                        end: dayjs(appointment.date).add(work?.durationMinutes ?? 0, 'minute').toDate(),
+                    };
+                })}
+                eventClick={event => {
+                    const appointment = appointments.find(a => a.date === dayjs(event.event.start).format('YYYY-MM-DD') && a.startTime === dayjs(event.event.start).format('HH:mm'));
+                    if (appointment === undefined) return;
+                    alert(JSON.stringify(appointment));
+                    //navigate(`/appointments/edit/${appointment.id}`);
+                }}
+            />
+        </Card>
         <Typography variant='h5'>Foglalkozások</Typography>
         <List>
             <Stack spacing={2}>
@@ -114,6 +128,7 @@ function AdminPage() {
                         min={6}
                         max={10}
                         valueLabelDisplay='auto'
+                        onChange={(event, value) => { setDayStart(`${value}:00`); }}
                     />
                 </Box>
                 <Typography>Munkaidő vége:</Typography>
@@ -123,6 +138,7 @@ function AdminPage() {
                         min={14}
                         max={20}
                         valueLabelDisplay='auto'
+                        onChange={(event, value) => { setDayEnd(`${value}:00`); }}
                     />
                 </Box>
             </CardContent>

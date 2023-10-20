@@ -13,6 +13,7 @@ import {
     DialogContent,
     DialogTitle,
     DialogActions,
+    Card,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +27,10 @@ import Work from '../../model/Work';
 import Appointment from '../../model/Appointment';
 import AppointmentDisplay from '../../components/AppointmentDisplay';
 import { deleteApp } from 'firebase/app';
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import dayjs from 'dayjs';
 
 function MainPage() {
     const navigate = useNavigate();
@@ -44,7 +49,7 @@ function MainPage() {
 
         const authStateChangedListener = (user: any) => {
             setIsLoggedIn(!!user)
-            
+
         };
 
         addOnAuthStateChangedListener(authStateChangedListener);
@@ -103,26 +108,45 @@ function MainPage() {
                         Böngészés
                     </Button>
                     <Typography variant='h5'>Foglalkozásaim</Typography>
-                    {
-                        appointments.map(appointment => {
-                            return <AppointmentDisplay
-                                appointment={appointment}
-                                onClick={() => {
-                                    const ans = prompt('Le szeretnéd mondani ezt az időpontot? Ha igen, írd be, hogy "lemondás"');
-                                    if (ans === 'lemondás') {
-                                        deleteAppointment(appointment.id, isSuccesful => {
-                                            if (isSuccesful) {
-                                                window.location.reload();
-                                            }
-                                            else {
-                                                alert('Sikertelen lemondás! Próbáld újra később!');
-                                            }
-                                        });
-                                    }
-                                }}
-                            />;
-                        })
-                    }
+                    <Card style={{ padding: 16 }}>
+                        <FullCalendar
+                            plugins={[timeGridPlugin, interactionPlugin]}
+                            initialView='timeGridWeek'
+                            allDaySlot={false}
+                            headerToolbar={{
+                                start: 'title',
+                                end: 'today prev,next',
+                            }}
+                            titleFormat={{
+                                month: 'short',
+                                day: 'numeric',
+                            }}
+                            weekends={false}
+                            events={appointments.map(appointment => {
+                                const work = works.find(w => w.title === appointment.workTitle);
+                                return {
+                                    title: work?.title,
+                                    start: `${appointment.date} ${appointment.startTime}`,
+                                    end: dayjs(appointment.date).add(work?.durationMinutes ?? 0, 'minute').toDate(),
+                                };
+                            })}
+                            eventClick={event => {
+                                const appointment = appointments.find(a => a.date === dayjs(event.event.start).format('YYYY-MM-DD') && a.startTime === dayjs(event.event.start).format('HH:mm'));
+                                if (appointment === undefined) return;
+                                const ans = prompt('Le szeretnéd mondani ezt az időpontot? Ha igen, írd be, hogy "lemondás"');
+                                if (ans === 'lemondás') {
+                                    deleteAppointment(appointment.id, isSuccesful => {
+                                        if (isSuccesful) {
+                                            window.location.reload();
+                                        }
+                                        else {
+                                            alert('Sikertelen lemondás! Próbáld újra később!');
+                                        }
+                                    });
+                                }
+                            }}
+                        />
+                    </Card>
                     <Button onClick={() => navigate('/booking')} variant='contained' startIcon={<AddIcon />}>
                         Új foglalkozás időpont kérése
                     </Button>
