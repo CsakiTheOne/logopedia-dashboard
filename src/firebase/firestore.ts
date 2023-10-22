@@ -55,7 +55,10 @@ export function getWorks(callback: (works: Work[]) => void) {
             querySnapshot.forEach(document => {
                 works.push({ ...new Work(''), ...document.data() });
             });
-            callback(works);
+            callback([
+                ...works,
+                new Work('Szabadnap', 'Szabadnap', 60 * 24),
+            ]);
         })
         .catch(error => {
             console.error(error);

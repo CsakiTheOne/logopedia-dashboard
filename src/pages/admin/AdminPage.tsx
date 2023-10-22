@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { logOut } from '../../firebase/auth';
+import { getCurrentUser, logOut } from '../../firebase/auth';
 import { getAbout, setAbout, setDayEnd, setDayStart } from '../../firebase/rtdb';
 import Page from '../../components/Page';
 import {
@@ -16,7 +16,7 @@ import {
     Stack,
 } from '@mui/material';
 import React from 'react';
-import { getAppointments, getAppointmentsByDate, getWorks } from '../../firebase/firestore';
+import { deleteAppointment, getAppointments, getAppointmentsByDate, getWorks, updateAppointment } from '../../firebase/firestore';
 import Work from '../../model/Work';
 import WorkDisplay from '../../components/WorkDisplay';
 import { useNavigate } from 'react-router-dom';
@@ -54,7 +54,7 @@ function AdminPage() {
         }
     >
         <Typography variant='h5'>Időpontok</Typography>
-        <Card style={{padding: 16}}>
+        <Card style={{ padding: 16 }}>
             <FullCalendar
                 plugins={[timeGridPlugin, interactionPlugin]}
                 initialView='timeGridWeek'
@@ -77,10 +77,42 @@ function AdminPage() {
                     };
                 })}
                 eventClick={event => {
+                    // Find appointment
                     const appointment = appointments.find(a => a.date === dayjs(event.event.start).format('YYYY-MM-DD') && a.startTime === dayjs(event.event.start).format('HH:mm'));
                     if (appointment === undefined) return;
+                    // If appointment owner is current user, delete it
+                    if (appointment.userId === getCurrentUser()?.uid) {
+                        if (window.confirm('Biztosan törölni szeretnéd ezt az időpontot?')) {
+                            deleteAppointment(appointment.id, isSuccessful => {
+                                if (isSuccessful) {
+                                    alert('Sikeres törlés!');
+                                    navigate('/');
+                                }
+                                else {
+                                    alert('Sikertelen törlés!');
+                                }
+                            });
+                        }
+                        return;
+                    }
+                    //TODO: Edit appointment
                     alert(JSON.stringify(appointment));
                     //navigate(`/appointments/edit/${appointment.id}`);
+                }}
+                dateClick={event => {
+                    const uid = getCurrentUser()?.uid;
+                    const selectedDate = dayjs(event.date).format('YYYY-MM-DD');
+                    if (uid === undefined) return;
+                    const ap = new Appointment('', uid, 'Szabadnap', selectedDate, '00:00');
+                    updateAppointment(ap, undefined, (isSuccesful) => {
+                        if (isSuccesful) {
+                            alert('Sikeres foglalás!');
+                            navigate('/');
+                        }
+                        else {
+                            alert('Sikertelen foglalás!');
+                        }
+                    });
                 }}
             />
         </Card>
