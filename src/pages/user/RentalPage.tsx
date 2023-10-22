@@ -19,7 +19,16 @@ function RentalPage() {
 
     useEffect(() => {
         getRentalItems(newRentalItems => {
-            setRentalItems(newRentalItems);
+            //setRentalItems(newRentalItems);
+            setRentalItems([
+                new RentalItem(
+                    '',
+                    'Könyv',
+                    'Ez egy példa tárgy',
+                    '',
+                    'available',
+                )
+            ]);
         });
     }, []);
 
@@ -40,13 +49,11 @@ function RentalPage() {
         <Button onClick={() => navigate('/')} variant='contained'>
             Vissza
         </Button>
-
         {
             rentalItems.map(rentalItem => {
                 return <ItemDisplay item={rentalItem} />;
             })
         }
-
     </Page>;
 }
 

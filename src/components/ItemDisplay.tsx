@@ -1,18 +1,33 @@
 import React from 'react';
 import RentalItem from '../model/RentalItem';
-import { ListItemButton, ListItemText } from '@mui/material';
+import { Button, Card, CardActions, CardContent, CardHeader, CardMedia, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 function ItemDisplay(props: any) {
     const item = props.item as RentalItem;
 
-    return <ListItemButton
-        selected={props.selected}
-        onClick={props.onClick}
-    >
-        <ListItemText
-            primary={`${item.name}`}
+    return <Card>
+        <CardHeader
+            title={item.name}
         />
-    </ListItemButton>;
+        <CardMedia
+            style={{ maxHeight: 500 }}
+            component='img'
+            image={item.imageUrl}
+            alt='Tárgy képe'
+        />
+        <CardContent>
+            <Typography>
+                {item.description}
+            </Typography>
+        </CardContent>
+        <CardActions>
+            <Button
+                disabled={['rented', 'unavailable'].includes(item.status)}
+            >
+                Kölcsönzés
+            </Button>
+        </CardActions>
+    </Card>;
 }
 
 export default ItemDisplay;
