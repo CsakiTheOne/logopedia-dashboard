@@ -37,7 +37,7 @@ function EditWorkPage(props: any) {
                 setDurationMinutesText(work.durationMinutes.toString());
             }
         });
-    }, []);
+    }, [workTitle]);
 
     return <Page
         header={

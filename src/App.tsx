@@ -15,6 +15,7 @@ import AdminPage from './pages/admin/AdminPage';
 import BookingPage from './pages/user/BookingPage';
 import EditWorkPage from './pages/admin/EditWorkPage';
 import RentalPage from './pages/user/RentalPage';
+import EditAppointmentPage from './pages/admin/EditAppointmentPage';
 
 function App() {
   const navigate = useNavigate();
@@ -43,6 +44,7 @@ function App() {
     <Route path='/booking' element={<BookingPage />} />
     <Route path='/admin' element={<AdminPage />} />
     <Route path='/works/edit/:workTitle' element={<EditWorkPage />} />
+    <Route path='/appointments/edit/:appointmentId' element={<EditAppointmentPage />} />
     <Route path='/rental' element={<RentalPage />} />
   </Routes>;
 }

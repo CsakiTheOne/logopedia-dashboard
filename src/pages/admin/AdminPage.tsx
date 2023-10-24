@@ -92,9 +92,8 @@ function AdminPage() {
                         }
                         return;
                     }
-                    //TODO: Edit appointment
-                    alert(JSON.stringify(appointment));
-                    //navigate(`/appointments/edit/${appointment.id}`);
+                    // Edit appointment
+                    navigate(`/appointments/edit/${appointment.id}`);
                 }}
                 dateClick={event => {
                     const uid = getCurrentUser()?.uid;

@@ -147,6 +147,22 @@ export function getAppointmentsByDate(date: string, callback: (appointments: App
         });
 }
 
+export function getAppointmentById(id: string | undefined, callback: (appointment: Appointment | undefined) => void) {
+    if (!id) {
+        callback(undefined);
+        return;
+    }
+    const docRef = doc(db, 'appointments', id);
+    getDoc(docRef)
+        .then(snapshot => {
+            callback({ ...snapshot.data(), id: snapshot.id } as Appointment);
+        })
+        .catch(error => {
+            console.error(error);
+            callback(undefined);
+        });
+}
+
 export function updateAppointment(appointment: Appointment, oldId: string | undefined, callback: (isSuccesful: boolean) => void) {
     if (oldId) {
         updateDoc(doc(db, 'appointments', oldId), { ...appointment })
