@@ -159,7 +159,7 @@ function MainPage() {
                     <Typography variant='h5'>Szolgáltatások</Typography>
                     <List>
                         <Stack spacing={2}>
-                            {works.map(work => <WorkDisplay
+                            {works.filter(work => !work.tags.includes(Work.TAG_HIDDEN)).map(work => <WorkDisplay
                                 work={work}
                                 selected={true}
                                 onClick={() => { setSelectedWork(work); }}

@@ -112,7 +112,7 @@ function BookingPage() {
                 <StepLabel>Foglalkozás: {selectedWorkTitle}</StepLabel>
                 <StepContent>
                     <List>
-                        {works.map(work => <WorkDisplay
+                        {works.filter(work => !work.tags.includes(Work.TAG_HIDDEN)).map(work => <WorkDisplay
                             showTime
                             work={work}
                             selected={selectedWorkTitle === work.title}
@@ -164,9 +164,10 @@ function BookingPage() {
                                 let isDisabled = false;
                                 disabledTimes.forEach(disabledTime => {
                                     const disabledTimeDate = disabledTime.start.split('T')[0];
+                                    if (eventDate !== disabledTimeDate) return;
                                     const disabledStartMins = dayjs(disabledTime.start).hour() * 60 + dayjs(disabledTime.start).minute();
                                     const disabledEndMins = dayjs(disabledTime.end).hour() * 60 + dayjs(disabledTime.end).minute();
-                                    if (eventDate === disabledTimeDate && startMins < disabledEndMins && endMins > disabledStartMins) isDisabled = true;
+                                    if (startMins < disabledEndMins && endMins > disabledStartMins) isDisabled = true;
                                 });
                                 if (isDisabled) return;
 

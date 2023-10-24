@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser, logOut } from '../../firebase/auth';
-import { getAbout, setAbout, setDayEnd, setDayStart } from '../../firebase/rtdb';
+import { getAbout, getDayStart, setAbout, setDayEnd, setDayStart } from '../../firebase/rtdb';
 import Page from '../../components/Page';
 import {
     AppBar,
@@ -82,15 +82,12 @@ function AdminPage() {
                     if (appointment === undefined) return;
                     // If appointment owner is current user, delete it
                     if (appointment.userId === getCurrentUser()?.uid) {
-                        if (window.confirm('Biztosan törölni szeretnéd ezt az időpontot?')) {
+                        if (window.confirm('Biztosan törölni szeretnéd ezt a szabadnapot?')) {
                             deleteAppointment(appointment.id, isSuccessful => {
-                                if (isSuccessful) {
-                                    alert('Sikeres törlés!');
-                                    navigate('/');
-                                }
-                                else {
+                                if (!isSuccessful) {
                                     alert('Sikertelen törlés!');
                                 }
+                                getAppointments(newAppointments => setAppointments(newAppointments));
                             });
                         }
                         return;
@@ -103,15 +100,12 @@ function AdminPage() {
                     const uid = getCurrentUser()?.uid;
                     const selectedDate = dayjs(event.date).format('YYYY-MM-DD');
                     if (uid === undefined) return;
-                    const ap = new Appointment('', uid, 'Szabadnap', selectedDate, '00:00');
+                    const ap = new Appointment('', uid, 'Szabadnap', selectedDate, '02:00');
                     updateAppointment(ap, undefined, (isSuccesful) => {
-                        if (isSuccesful) {
-                            alert('Sikeres foglalás!');
-                            navigate('/');
-                        }
-                        else {
+                        if (!isSuccesful) {
                             alert('Sikertelen foglalás!');
                         }
+                        getAppointments(newAppointments => setAppointments(newAppointments));
                     });
                 }}
             />
@@ -119,15 +113,16 @@ function AdminPage() {
         <Typography variant='h5'>Foglalkozások</Typography>
         <List>
             <Stack spacing={2}>
-                {works.map(work => <WorkDisplay
-                    showTime
-                    work={work}
-                    selected={true}
-                    onClick={() => {
-                        navigate(`/works/edit/${work.title}`);
-                    }}
-                />
-                )}
+                {
+                    works.filter(work => !work.tags.includes(Work.TAG_HIDDEN)).map(work => <WorkDisplay
+                        showTime
+                        work={work}
+                        selected={true}
+                        onClick={() => {
+                            navigate(`/works/edit/${work.title}`);
+                        }}
+                    />)
+                }
                 <WorkDisplay
                     work={new Work('Új foglalkozás')}
                     selected={true}
@@ -156,9 +151,9 @@ function AdminPage() {
                 <Typography>Munkaidő kezdete:</Typography>
                 <Box style={{ marginInlineStart: 16, marginInlineEnd: 16 }}>
                     <Slider
-                        marks={[{ value: 6, label: '6:00' }, { value: 10, label: '10:00' }]}
-                        min={6}
-                        max={10}
+                        marks={[{ value: 5, label: '5:00' }, { value: 12, label: '12:00' }]}
+                        min={5}
+                        max={12}
                         valueLabelDisplay='auto'
                         onChange={(event, value) => { setDayStart(`${value}:00`); }}
                     />
@@ -166,9 +161,9 @@ function AdminPage() {
                 <Typography>Munkaidő vége:</Typography>
                 <Box style={{ marginInlineStart: 16, marginInlineEnd: 16 }}>
                     <Slider
-                        marks={[{ value: 14, label: '14:00' }, { value: 20, label: '20:00' }]}
-                        min={14}
-                        max={20}
+                        marks={[{ value: 12, label: '12:00' }, { value: 22, label: '22:00' }]}
+                        min={12}
+                        max={22}
                         valueLabelDisplay='auto'
                         onChange={(event, value) => { setDayEnd(`${value}:00`); }}
                     />

@@ -57,7 +57,7 @@ export function getWorks(callback: (works: Work[]) => void) {
             });
             callback([
                 ...works,
-                new Work('Szabadnap', 'Szabadnap', 60 * 24),
+                new Work('Szabadnap', 'Szabadnap', 60 * 20, [Work.TAG_HIDDEN]),
             ]);
         })
         .catch(error => {
@@ -105,7 +105,7 @@ export function getAppointments(callback: (appointments: Appointment[]) => void)
         .then(querySnapshot => {
             const appointments: Appointment[] = [];
             querySnapshot.forEach(document => {
-                appointments.push({ ...new Appointment(document.id, '', '', '', ''), ...document.data() });
+                appointments.push({ ...document.data(), id: document.id } as Appointment);
             });
             callback(appointments);
         })
@@ -121,7 +121,7 @@ export function getAppointmentsByUser(userId: string | undefined, callback: (app
         .then(querySnapshot => {
             const appointments: Appointment[] = [];
             querySnapshot.forEach(document => {
-                appointments.push({ ...new Appointment(document.id, '', '', '', ''), ...document.data() });
+                appointments.push({ ...document.data(), id: document.id } as Appointment);
             });
             callback(appointments);
         })
@@ -137,7 +137,7 @@ export function getAppointmentsByDate(date: string, callback: (appointments: App
         .then(querySnapshot => {
             const appointments: Appointment[] = [];
             querySnapshot.forEach(document => {
-                appointments.push({ ...new Appointment(document.id, '', '', '', ''), ...document.data() });
+                appointments.push({ ...document.data(), id: document.id } as Appointment);
             });
             callback(appointments);
         })
@@ -168,12 +168,16 @@ export function updateAppointment(appointment: Appointment, oldId: string | unde
 
 export function deleteAppointment(id: string | undefined, callback: (isSuccesful: boolean) => void) {
     if (!id) {
+        console.error('No id provided for appointment deletion!');
         callback(false);
         return;
     }
     deleteDoc(doc(db, 'appointments', id))
         .then(() => callback(true))
-        .catch(() => callback(false));
+        .catch(err => {
+            console.error(err);
+            callback(false)
+        });
 }
 
 //
