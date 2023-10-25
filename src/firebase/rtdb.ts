@@ -35,3 +35,9 @@ export function getDayEnd(callback: (dayStart: string) => void) {
 export function setDayEnd(value: string) {
     set(child(dbRef, 'appointment_settings/day_end'), value);
 }
+
+export function getBreakBetweenWorks(callback: (breakBetweenWorks: number) => void) {
+    get(child(dbRef, 'appointment_settings/break_between_works'))
+        .then(snapshot => callback(snapshot.val()))
+        .catch(error => callback(0));
+}

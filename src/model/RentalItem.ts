@@ -13,6 +13,7 @@ export default class RentalItem {
     description: string;
     imageUrl: string;
     status: RentalItemStatus;
+    currentHolderEmail?: string;
 
     constructor(id: string, name: string, description: string, imageUrl: string, status: string) {
         this.id = id;

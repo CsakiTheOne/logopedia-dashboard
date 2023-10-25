@@ -101,7 +101,10 @@ function EditWorkPage(props: any) {
                 Mentés
             </Button>
         </Stack>
-        <Button color='error' onClick={() => {
+        <Button
+        variant='contained'
+        color='error'
+        onClick={() => {
             deleteWork(
                 workTitle,
                 isSuccesful => {

@@ -19,16 +19,7 @@ function RentalPage() {
 
     useEffect(() => {
         getRentalItems(newRentalItems => {
-            //setRentalItems(newRentalItems);
-            setRentalItems([
-                new RentalItem(
-                    '',
-                    'Könyv',
-                    'Ez egy példa tárgy',
-                    '',
-                    'available',
-                )
-            ]);
+            setRentalItems(newRentalItems);
         });
     }, []);
 

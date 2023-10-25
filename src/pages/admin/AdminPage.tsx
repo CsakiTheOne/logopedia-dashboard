@@ -16,7 +16,7 @@ import {
     Stack,
 } from '@mui/material';
 import React from 'react';
-import { deleteAppointment, getAppointments, getAppointmentsByDate, getWorks, updateAppointment } from '../../firebase/firestore';
+import { deleteAppointment, getAppointments, getAppointmentsByDate, getRentalItems, getWorks, updateAppointment } from '../../firebase/firestore';
 import Work from '../../model/Work';
 import WorkDisplay from '../../components/WorkDisplay';
 import { useNavigate } from 'react-router-dom';
@@ -28,17 +28,21 @@ import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { app } from '../../firebase/firebase';
+import RentalItem from '../../model/RentalItem';
+import ItemDisplay from '../../components/ItemDisplay';
 
 function AdminPage() {
     const navigate = useNavigate();
     const [aboutUs, setAboutUs] = useState('');
     const [works, setWorks] = useState<Work[]>([]);
     const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [rentalItems, setRentalItems] = useState<RentalItem[]>([]);
 
     useEffect(() => {
         getAbout(about => setAboutUs(about));
         getWorks(newWorks => setWorks(newWorks));
         getAppointments(newAppointments => setAppointments(newAppointments));
+        getRentalItems(newRentalItems => setRentalItems(newRentalItems));
     }, []);
 
     return <Page
@@ -77,9 +81,21 @@ function AdminPage() {
                     };
                 })}
                 eventClick={event => {
+                    console.log(`Clicked event: ${event.event.title}`);
+                    console.log({
+                        date: dayjs(event.event.start).format('YYYY-MM-DD'),
+                        time: dayjs(event.event.start).format('HH:mm'),
+                    });
                     // Find appointment
-                    const appointment = appointments.find(a => a.date === dayjs(event.event.start).format('YYYY-MM-DD') && a.startTime === dayjs(event.event.start).format('HH:mm'));
-                    if (appointment === undefined) return;
+                    console.log(appointments.map(a => a.date + ' ' + a.startTime));
+                    const appointment = appointments.find(a =>
+                        a.date === dayjs(event.event.start).format('YYYY-MM-DD') &&
+                        (a.startTime === dayjs(event.event.start).format('HH:mm') || a.startTime === dayjs(event.event.start).format('HH:mm:ss'))
+                    );
+                    if (appointment === undefined) {
+                        console.error('Appointment not found!');
+                        return;
+                    }
                     // If appointment owner is current user, delete it
                     if (appointment.userId === getCurrentUser()?.uid) {
                         if (window.confirm('Biztosan törölni szeretnéd ezt a szabadnapot?')) {
@@ -129,6 +145,25 @@ function AdminPage() {
                         navigate(`/works/edit/Új foglalkozás`);
                     }}
                 />
+            </Stack>
+        </List>
+        <Typography variant='h5'>Kölcsönözhető tárgyak</Typography>
+        <List>
+            <Stack spacing={2}>
+                {
+                    rentalItems.map(item => <ItemDisplay
+                        item={item}
+                        adminView
+                    />)
+                }
+                <Button
+                    variant='contained'
+                    onClick={() => {
+                        navigate(`/items/edit/new`);
+                    }}
+                >
+                    Új tárgy
+                </Button>
             </Stack>
         </List>
         <Typography variant='h5'>Beállítások</Typography>

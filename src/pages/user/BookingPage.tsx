@@ -27,7 +27,7 @@ import Appointment from '../../model/Appointment';
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { getDayEnd, getDayStart } from '../../firebase/rtdb';
+import { getBreakBetweenWorks, getDayEnd, getDayStart } from '../../firebase/rtdb';
 
 function BookingPage() {
     const navigate = useNavigate();
@@ -40,31 +40,37 @@ function BookingPage() {
     const [dayEnd, setDayEnd] = useState('16:00');
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [disabledTimes, setDisabledTimes] = useState<{ start: string, end: string, display: string }[]>([]);
+    const [breakMinutes, setBreakMinutes] = useState(0);
 
     useEffect(() => {
         getWorks(newWorks => { setWorks(newWorks); });
         getDayStart(newDayStart => { setDayStart(newDayStart); });
         getDayEnd(newDayEnd => { setDayEnd(newDayEnd); });
         getAppointments(newAppointments => { setAppointments(newAppointments); });
+        getBreakBetweenWorks(newBreakBetweenWorks => { setBreakMinutes(newBreakBetweenWorks); });
     }, []);
 
     useEffect(() => {
         //TODO: szabadnapok, heti limitek, szünetek
         setDisabledTimes([
             ...appointments.map(appointment => {
+                const hoursOnDay = appointments
+                    .filter(a => a.date === appointment.date)
+                    .map(a => works.find(w => w.title === a.workTitle)?.durationMinutes ?? 0)
+                    .reduce((a, b) => a + b, 0);
                 return {
                     start: dayjs(`${appointment.date}T${appointment.startTime}`)
-                        .subtract(30, 'minute')
+                        .subtract(hoursOnDay > 4 ? 0 : breakMinutes, 'minute')
                         .format('YYYY-MM-DDTHH:mm:ss'),
                     end: dayjs(`${appointment.date}T${appointment.startTime}`)
-                        .add(30, 'minute')
+                        .add(hoursOnDay > 4 ? 0 : breakMinutes, 'minute')
                         .add(works.find(w => w.title === appointment.workTitle)?.durationMinutes ?? 0, 'minute')
                         .format('YYYY-MM-DDTHH:mm:ss'),
                     display: 'background',
                 };
             }),
         ]);
-    }, [appointments, works]);
+    }, [appointments, works, breakMinutes]);
 
     function NavigationButtons(props: any) {
         return <Stack direction='row' justifyContent='flex-end' spacing={2}>

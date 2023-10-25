@@ -32,7 +32,7 @@ export function setUserEmail(uid: string, email: string) {
     const docRef = doc(db, 'users', uid);
     setDoc(docRef, { email: email }, { merge: true });
 }
-export function getUserEmail(uid: string, callback: (email: string) => void) {
+export function getUserEmail(uid: string | undefined, callback: (email: string) => void) {
     if (!uid) return;
     const docRef = doc(db, 'users', uid);
     getDoc(docRef)
@@ -221,7 +221,7 @@ export function getRentalItems(callback: (items: RentalItem[]) => void) {
         .then(querySnapshot => {
             const items: RentalItem[] = [];
             querySnapshot.forEach(document => {
-                items.push({ ...new RentalItem(document.id, '', '', '', ''), ...document.data() });
+                items.push({ ...document.data(), id: document.id } as RentalItem);
             });
             callback(items);
         })
@@ -231,8 +231,24 @@ export function getRentalItems(callback: (items: RentalItem[]) => void) {
         });
 }
 
+export function getRentalItemById(id: string | undefined, callback: (item: RentalItem | undefined) => void) {
+    if (!id) {
+        callback(undefined);
+        return;
+    }
+    const docRef = doc(db, 'items', id);
+    getDoc(docRef)
+        .then(snapshot => {
+            callback({ ...snapshot.data(), id: snapshot.id } as RentalItem);
+        })
+        .catch(error => {
+            console.error(error);
+            callback(undefined);
+        });
+}
+
 export function updateRentalItem(item: RentalItem, oldId: string | undefined, callback: (isSuccesful: boolean) => void) {
-    if (oldId) {
+    if (oldId && oldId !== '') {
         updateDoc(doc(db, 'items', oldId), { ...item })
             .then(() => callback(true))
             .catch(() => callback(false));
