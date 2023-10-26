@@ -2,9 +2,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Page from "../../components/Page";
 import { useEffect, useState } from "react";
 import { getRentalItemById, updateRentalItem, deleteRentalItem } from "../../firebase/firestore";
-import { AppBar, Toolbar, Typography, Button, TextField, Stack, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, TextField, Stack, Select, MenuItem, FormControl, InputLabel, Card, CardContent, CardMedia } from "@mui/material";
 import { logOut } from "../../firebase/auth";
 import RentalItem from "../../model/RentalItem";
+import { uploadImage } from "../../firebase/storage";
 
 function EditRentalItemPage(props: any) {
     const navigate = useNavigate();
@@ -49,14 +50,35 @@ function EditRentalItemPage(props: any) {
                 setItem({ ...item, description: event.target.value } as RentalItem);
             }}
         />
-        <TextField
-            variant='filled'
-            label='Kép URL-je'
-            value={item?.imageUrl}
-            onChange={event => {
-                setItem({ ...item, imageUrl: event.target.value } as RentalItem);
-            }}
-        />
+        <Card>
+            <CardMedia
+                component='img'
+                height='200'
+                image={item?.imageUrl}
+            />
+            <CardContent>
+                <TextField
+                    fullWidth
+                    variant='filled'
+                    label='Kép URL-je'
+                    value={item?.imageUrl}
+                    onChange={event => {
+                        setItem({ ...item, imageUrl: event.target.value } as RentalItem);
+                    }}
+                />
+                <Typography>Vagy kép feltöltése:</Typography>
+                <input
+                    type="file"
+                    multiple={false}
+                    accept="image/*"
+                    onChange={event => {
+                        uploadImage(event.target.files?.item(0), (url) => {
+                            setItem({ ...item, imageUrl: url } as RentalItem);
+                        });
+                    }}
+                />
+            </CardContent>
+        </Card>
         <FormControl fullWidth>
             <InputLabel id="status-label">Státusz</InputLabel>
             <Select
