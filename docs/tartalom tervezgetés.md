@@ -1,4 +1,151 @@
-# Outline
+# Doksi
+
+## Sallangok
+
+- témakiírás
+- nyilatkozatok
+- köszönetnyilvánítás
+- tartalmi összefoglaló
+- tartalomjegyzék
+- jelölésjegyzék
+
+## Irodalmi áttekintés (~5-6 oldal)
+
+### Logopédiai folyamatok
+
+### IT eszközök és operációs rendszerek fejlődése
+
+### Mobil alkalmazások fejlődése
+
+### PWA technológia
+
+### Logopédia és gyógypedagógia területén használt alkalmazások felmérése
+
+## Feladat és követelmények
+
+### Feladat leírása (min. fél oldal)
+
+### Funkcionális követelmények
+
+- követelmény elemzés
+- use-case diagram / táblázat
+
+## Technológiák (min. 4 oldal)
+
+### Git és GitHub
+
+### Visual Studio Code
+
+### Node.js, npm és Bun
+
+### JavaScript és TypeScript
+
+### React és Redux
+
+### Firebase
+
+- auth
+- hosting
+- firestore
+- realtime database
+- storage
+
+### PWA
+
+### Google Chrome, Lighthouse és egyéb Chromium fejlesztői eszközök
+
+- Lighthouse
+
+### PWA kompatibilis operációs rendszerek
+
+## Fejleszői dokumentáció
+
+### Fejlesztői környezet beállítása és projekt konfigurálása
+
+1. fejlesztői eszközök telepítése
+2. projekt előkészítése
+3. projekt build-elése
+
+### Adatreprezentáció
+
+- user
+- appointment
+- work
+- rentalItem
+
+### Fontosabb funkciók
+
+- reszponzivitás
+- időpont foglalás
+- kölcsönzés
+
+### Tesztelés
+
+- Lighthouse
+- Chrome fejleszői eszközök
+- React fejleszői eszközök
+- tesztelés mobilon
+
+## Felhasználói dokumentáció
+
+### Felhasználói felület
+
+- képekkel
+
+### Webapp elérése és telepítése
+
+- képekkel
+
+### Időpont foglalás
+
+- képekkel
+
+### Kölcsönzés
+
+- képekkel
+
+## Doksi végén lévő sallangok
+
+- irodalomjegyzék
+- hivatkozások
+- mellékletek
+
+# 2. félévhez alkotott jegyzet
+
+Nem kell bevezetés, mert tartalmi összefoglaló van
+
+## 1. fejezet
+
+Téma elhelyezése, irodalmazás (5-6 oldal)
+
+- PWA
+- mobil appok fejlődése
+- IT eszközök fejlődése
+
+## 2. fejezet
+
+- feladat leírása (kb. fél oldal)
+- funkcionális követelmények, követelmény elemzés, use-case diagram / táblázat
+
+## 3. fejezet (min. 4 oldal jó lenne)
+
+- felhasznált technológiák
+- adatreprezentáció
+
+## 4. fejezet
+
+- fejlesztői dokumentáció
+- kódrészletek magyarázattal
+- reszponzivitás
+- tesztelés
+
+## 5. fejezet
+
+- felhasználói dokumentáció
+- útmutatók, mit hogyan kell csinálni
+- képek, ábrák, hova kell nyomni
+
+# 1. félévhez alkotott jegyzet
 
 Fájl neve: `2022-23_2_Csáktornyai Ádám_GWBTSU_Szakdolgozat`
 
@@ -91,32 +238,3 @@ erre talán a sablonban van iránymutatás
 ```
 
 ### Mellékletek
-
-## ChatGPT által készített TODO lista
-
-- [ ] Bevezető
-  - [ ] Témakör pozícionálása
-  - [ ] Motiváció bemutatása
-  - [ ] Fejezetek előre vetítése
-- [ ] Piackutatás, szakirodalmi kutatás
-  - [ ] Mobileszközök és mobilfejlesztés fejlődése
-  - [ ] Mobileszközök használatának és mobil OS felhasználásoknak statisztikái és trendjei
-  - [ ] PWA-k áttekintése
-- [ ] A logopédiai folyamatok támogatását megvalósító alkalmazás problémadefiníciója
-  - [ ] Logopédiai folyamatok áttekintése
-  - [ ] Időpontfoglalás jelentősége a logopédiai folyamatokban
-  - [ ] Hiányosságok az időpontfoglalási rendszerekben
-- [ ] Technológiai háttér
-  - [ ] Fejlesztői eszközök bemutatása
-  - [ ] Felhasznált programozási nyelvek és technológiák
-  - [ ] PWA fejlesztési folyamata és lehetőségei
-- [ ] Fejlesztői dokumentáció
-  - [ ] Követelmények és funkcionális specifikáció
-  - [ ] Rendszerterv és architektúra
-  - [ ] Adatmodell
-  - [ ] Fejlesztési folyamat és tesztelési eljárások
-- [ ] Felhasználói dokumentáció
-  - [ ] Alkalmazás használati útmutatója
-  - [ ] Felhasználói felület tervezése és funkcionalitása
-  - [ ] Hibaelhárítás és támogatás
-- [ ] Összefoglalás
