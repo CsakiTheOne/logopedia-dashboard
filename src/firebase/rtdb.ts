@@ -1,4 +1,3 @@
-import { ex } from '@fullcalendar/core/internal-common';
 import { app } from './firebase';
 import { getDatabase, ref, child, get, set } from 'firebase/database';
 
